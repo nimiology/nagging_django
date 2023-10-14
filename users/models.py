@@ -3,24 +3,40 @@ from django.db import models
 import pytz
 from django.urls import reverse
 
-from config import settings
-from users.utils import user_profile_upload_file
+from django.contrib.auth.models import BaseUserManager
+
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, password, **extra_fields):
+        user = self.model(**extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, **extra_fields):
+        user = self.create_user(**extra_fields)
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
+        return user
 
 
 class MyUser(AbstractUser):
+    username = None
+    email = None
+    first_name = None
+    last_name = None
+
+    USERNAME_FIELD = 'id'
+    REQUIRED_FIELDS = []
+
+    id = models.AutoField(primary_key=True)
     followings = models.ManyToManyField('self', blank=True, related_name='followers', symmetrical=False, )
-    following_artists = models.ManyToManyField('artist.Artist', blank=True, related_name='followers')
-    profile_img = models.ImageField(upload_to=user_profile_upload_file, default='profile.jpg')
-    header_img = models.ImageField(upload_to=user_profile_upload_file, default='header.jpg')
     bio = models.TextField(max_length=500, blank=True)
     link = models.URLField(max_length=200, blank=True)
     location = models.CharField(max_length=50, blank=True)
-    timezone = models.CharField(max_length=3,
-                                choices=[(str(number), pytz.all_timezones[number]) for number in
-                                         range(0, len(pytz.all_timezones))],
-                                default=str(pytz.all_timezones.index(settings.TIME_ZONE)))
-    setting = models.JSONField(null=True, blank=True)
-    verify = models.BooleanField(default=False)
+
+    objects = CustomUserManager()
 
     def followings_count(self) -> int:
         return self.followings.count()
@@ -28,13 +44,8 @@ class MyUser(AbstractUser):
     def followers_count(self):
         return self.followers.count()
 
-    def artist_followings_count(self) -> int:
-        return self.following_artists.count()
-
     def get_absolute_url(self):
         return reverse('users:get', kwargs={'username': self.username})
 
     class Meta(AbstractUser.Meta):
         swappable = 'AUTH_USER_MODEL'
-
-

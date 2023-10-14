@@ -1,6 +1,5 @@
 import pytz
 from django.db.models import Case, When, Value
-from django.forms import BooleanField
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListAPIView, RetrieveAPIView, GenericAPIView, get_object_or_404, \
     RetrieveUpdateAPIView
@@ -8,10 +7,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from art.models import Artist
-from art.serializers import FollowingArtistSerializer
-from artist.serializers import ArtistSerializer
-from notification.models import Notification
 from users.serializers import MyUserSerializer, FollowingUserSerializer
 from users.models import MyUser
 
@@ -65,29 +60,10 @@ class FollowUserAPI(GenericAPIView):
                 profile.followings.remove(following)
             else:
                 profile.followings.add(following)
-                Notification.objects.create(owner=following,
-                                            type='f',
-                                            object_id=profile.username)
             return Response(self.get_serializer(following).data)
 
         else:
             raise ValidationError('You cant follow yourself')
-
-
-class FollowArtistAPI(GenericAPIView):
-    serializer_class = ArtistSerializer
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, *args, **kwargs):
-        profile = request.user
-        pk = kwargs['pk']
-        following = get_object_or_404(Artist, pk=pk)
-        user_artist_following = profile.following_artists.all()
-        if following in user_artist_following:
-            profile.following_artists.remove(following)
-        else:
-            profile.following_artists.add(following)
-        return Response(self.get_serializer(following).data)
 
 
 class FollowingAPI(ListAPIView):
@@ -108,17 +84,6 @@ class FollowersAPI(ListAPIView):
         profile = get_object_or_404(MyUser, username=username)
         followings = MyUser.objects.filter(followings__in=[profile])
         return followings
-
-
-class ArtistFollowingAPI(ListAPIView):
-    serializer_class = FollowingArtistSerializer
-
-    def get_queryset(self):
-        username = self.kwargs['username']
-        profile = get_object_or_404(MyUser, username=username)
-        followings = profile.following_artists.all()
-        return followings
-
 
 class MyUsersAPI(RetrieveUpdateAPIView):
     serializer_class = MyUserSerializer
