@@ -14,11 +14,9 @@ class MyUserSerializer(serializers.ModelSerializer):
             'bio',
             'link',
             'location',
-            'verify',
             'following',
             'followings_count',
             'followers_count',
-            'artist_followings_count',
         ]
 
     def _user(self):
@@ -42,7 +40,6 @@ class FollowingUserSerializer(MyUserSerializer):
         fields = [
             'id',
             'following',
-            'verify',
         ]
         read_only_fields = fields
 

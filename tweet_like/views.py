@@ -24,7 +24,7 @@ class TweetLikeViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action == 'create':
             permission_classes = [IsAuthenticated]
-        elif self.action in ['destroy']:
+        elif self.action == 'destroy':
             permission_classes = [IsOwner]
         else:
             permission_classes = []

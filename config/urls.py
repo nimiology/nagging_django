@@ -47,6 +47,6 @@ urlpatterns = [
 
     path('user/', include('users.urls')),
     path('tweet/', include('tweet.urls')),
-    path('tweet/like/', include('tweet_like.urls')),
+    path('like/', include('tweet_like.urls')),
 
 ]

@@ -1,4 +1,6 @@
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from tweet.models import Tweet
@@ -29,6 +31,18 @@ class TweetModelViewSet(ModelViewSet):
         else:
             permission_classes = []
         return [permission() for permission in permission_classes]
+
+    def update(self, request, *args, **kwargs):
+        return Response(
+            {"detail": "Not allowed. Use POST to create a like."},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response(
+            {"detail": "Not allowed. Use POST to create a like."},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
 
     def perform_create(self, serializer):
         return serializer.save(owner=self.request.user)

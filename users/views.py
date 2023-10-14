@@ -13,14 +13,8 @@ from users.models import MyUser
 
 class UserSearch(ListAPIView):
     serializer_class = FollowingUserSerializer
-    filterset_fields = {'first_name': ['icontains'],
-                        'username': ['icontains'],
-                        }
     ordering_fields = [
         'id',
-        'username',
-        'first_name',
-        'verify',
         'date_joined'
         'following',
     ]
@@ -43,7 +37,7 @@ class UserSearch(ListAPIView):
 class GetUser(RetrieveAPIView):
     serializer_class = MyUserSerializer
     queryset = MyUser.objects.all()
-    lookup_field = 'username'
+    lookup_field = 'id'
 
 
 class FollowUserAPI(GenericAPIView):
@@ -52,8 +46,7 @@ class FollowUserAPI(GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         profile = request.user
-        username = kwargs['username']
-        following = get_object_or_404(MyUser, username=username)
+        following = get_object_or_404(MyUser, pk=kwargs['id'])
         if following != profile:
             user_following = profile.followings.all()
             if following in user_following:
@@ -70,8 +63,7 @@ class FollowingAPI(ListAPIView):
     serializer_class = FollowingUserSerializer
 
     def get_queryset(self):
-        username = self.kwargs['username']
-        profile = get_object_or_404(MyUser, username=username)
+        profile = get_object_or_404(MyUser, id=self.kwargs['id'])
         followings = profile.followings.all()
         return followings
 
@@ -80,8 +72,7 @@ class FollowersAPI(ListAPIView):
     serializer_class = FollowingUserSerializer
 
     def get_queryset(self):
-        username = self.kwargs['username']
-        profile = get_object_or_404(MyUser, username=username)
+        profile = get_object_or_404(MyUser, id=self.kwargs['id'])
         followings = MyUser.objects.filter(followings__in=[profile])
         return followings
 
