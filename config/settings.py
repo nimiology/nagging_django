@@ -49,7 +49,7 @@ INSTALLED_APPS = [
 
     'users',
     'tweet',
-    'tweet_likes',
+    'tweet_like',
 ]
 
 MIDDLEWARE = [

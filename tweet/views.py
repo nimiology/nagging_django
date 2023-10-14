@@ -30,3 +30,5 @@ class TweetModelViewSet(ModelViewSet):
             permission_classes = []
         return [permission() for permission in permission_classes]
 
+    def perform_create(self, serializer):
+        return serializer.save(owner=self.request.user)
