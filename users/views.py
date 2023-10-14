@@ -85,6 +85,7 @@ class FollowersAPI(ListAPIView):
         followings = MyUser.objects.filter(followings__in=[profile])
         return followings
 
+
 class MyUsersAPI(RetrieveUpdateAPIView):
     serializer_class = MyUserSerializer
     queryset = MyUser.objects.all()
@@ -92,12 +93,3 @@ class MyUsersAPI(RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
-
-
-timezones = [{'id': str(number), 'timezone': pytz.all_timezones[number]} for number in
-             range(0, len(pytz.all_timezones))]
-
-
-class GetAllTimeZonesAPI(APIView):
-    def get(self, request, *args, **kwargs):
-        return Response(timezones)

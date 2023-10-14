@@ -10,15 +10,10 @@ class MyUserSerializer(serializers.ModelSerializer):
         model = MyUser
         fields = [
             'id',
-            'first_name',
-            'username',
-            'profile_img',
-            'header_img',
             'date_joined',
             'bio',
             'link',
             'location',
-            'artist',
             'verify',
             'following',
             'followings_count',
@@ -40,30 +35,14 @@ class MyUserSerializer(serializers.ModelSerializer):
                     return True
         return False
 
-    def to_representation(self, instance):
-        data = super(MyUserSerializer, self).to_representation(instance)
-
-        user = self.context.get('request').user
-        if user == instance:
-            data['last_name'] = instance.last_name
-            data['email'] = instance.email
-            data['timezone'] = instance.timezone
-            data['setting'] = instance.setting
-
-        return data
-
 
 class FollowingUserSerializer(MyUserSerializer):
     class Meta:
         model = MyUser
         fields = [
             'id',
-            'username',
-            'first_name',
-            'profile_img',
             'following',
             'verify',
-            'artist',
         ]
         read_only_fields = fields
 

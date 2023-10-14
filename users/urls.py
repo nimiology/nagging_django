@@ -1,7 +1,6 @@
 from django.urls import path
 
-from users.views import UserSearch, GetUser, FollowUserAPI, FollowingAPI, FollowersAPI, \
-    GetAllTimeZonesAPI
+from users.views import UserSearch, GetUser, FollowUserAPI, FollowingAPI, FollowersAPI
 
 app_name = 'users'
 urlpatterns = [
@@ -11,7 +10,5 @@ urlpatterns = [
     path('follow/user/<username>/', FollowUserAPI.as_view(), name='follow_user'),
     path('<username>/following/', FollowingAPI.as_view(), name='followings'),
     path('<username>/follower/', FollowersAPI.as_view(), name='followers'),
-
-    path('timezones/', GetAllTimeZonesAPI.as_view(), name='timezones'),
 
 ]

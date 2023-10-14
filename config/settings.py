@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'debug_toolbar',
 
     'users',
-    'tweet'
+    'tweet',
+    'tweet_likes',
 ]
 
 MIDDLEWARE = [

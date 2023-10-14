@@ -46,5 +46,6 @@ urlpatterns = [
     path('__debug__/', include('debug_toolbar.urls')),
 
     path('user/', include('users.urls')),
+    path('tweet/', include('tweet.urls')),
 
 ]
