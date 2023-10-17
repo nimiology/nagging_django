@@ -8,6 +8,7 @@ from users.serializers import FollowingUserSerializer
 class TweetSerializer(serializers.ModelSerializer):
     owner = FollowingUserSerializer(read_only=True)
     user_like = serializers.SerializerMethodField()
+    likes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Tweet
@@ -28,3 +29,6 @@ class TweetSerializer(serializers.ModelSerializer):
                 except TweetLike.DoesNotExist:
                     pass
         return None
+
+    def get_likes_count(self, obj):
+        return obj.likes.count()
